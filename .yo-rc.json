@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.gymmastercatalogue.app"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "microservice",
+    "baseName": "gymMasterCatalogue",
+    "packageName": "com.gymmastercatalogue.app",
+    "packageFolder": "com/gymmastercatalogue/app",
+    "serverPort": "5104",
+    "authenticationType": "jwt",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": false,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "oracle",
+    "prodDatabaseType": "oracle",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YzIyZGE1NzE3ZWE2MjY3YzNmM2QyZjFmODYyMjRlYzE0YjViMjJhYjY4MmRlOGU2NDhiNzFlMmFjMThhYWQxNWJjMGRmYWVjMjliZjJhMDc0NzA0YzI1MGU2ZTA5ZDNjYjBhOThlNmI0ODBkNDVhZjNlZWZkMzFjMTc1YWYzZTM=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1617450833758,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "blueprints": [],
+    "skipClient": true,
+    "skipUserManagement": true,
+    "lastLiquibaseTimestamp": 1617451165000
+  }
+}

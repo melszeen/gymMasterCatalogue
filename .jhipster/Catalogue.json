@@ -1,0 +1,42 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "gymMasterCatalogue",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "partnerId",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "Double",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "duration",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "sessionDt",
+      "fieldType": "Instant"
+    }
+  ],
+  "changelogDate": "20210403115925",
+  "dto": "mapstruct",
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl",
+  "entityTableName": "catalogue",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination",
+  "microserviceName": "gymMasterCatalogue"
+}
