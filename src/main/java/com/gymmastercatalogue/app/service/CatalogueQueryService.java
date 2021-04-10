@@ -110,6 +110,9 @@ public class CatalogueQueryService extends QueryService<Catalogue> {
             if (criteria.getSessionDt() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getSessionDt(), Catalogue_.sessionDt));
             }
+            if (criteria.getCategory() != null) {
+                specification = specification.and(buildSpecification(criteria.getCategory(), Catalogue_.category));
+            }
         }
         return specification;
     }

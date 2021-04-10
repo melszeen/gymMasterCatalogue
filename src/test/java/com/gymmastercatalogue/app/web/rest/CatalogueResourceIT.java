@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.gymmastercatalogue.app.domain.enumeration.categoryEnum;
 /**
  * Integration tests for the {@link CatalogueResource} REST controller.
  */
@@ -63,6 +64,9 @@ public class CatalogueResourceIT {
 
     private static final Instant DEFAULT_SESSION_DT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_SESSION_DT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final categoryEnum DEFAULT_CATEGORY = categoryEnum.HIIT;
+    private static final categoryEnum UPDATED_CATEGORY = categoryEnum.GYM;
 
     @Autowired
     private CatalogueRepository catalogueRepository;
@@ -104,7 +108,8 @@ public class CatalogueResourceIT {
             .partnerId(DEFAULT_PARTNER_ID)
             .price(DEFAULT_PRICE)
             .duration(DEFAULT_DURATION)
-            .sessionDt(DEFAULT_SESSION_DT);
+            .sessionDt(DEFAULT_SESSION_DT)
+            .category(DEFAULT_CATEGORY);
         return catalogue;
     }
     /**
@@ -119,7 +124,8 @@ public class CatalogueResourceIT {
             .partnerId(UPDATED_PARTNER_ID)
             .price(UPDATED_PRICE)
             .duration(UPDATED_DURATION)
-            .sessionDt(UPDATED_SESSION_DT);
+            .sessionDt(UPDATED_SESSION_DT)
+            .category(UPDATED_CATEGORY);
         return catalogue;
     }
 
@@ -148,6 +154,7 @@ public class CatalogueResourceIT {
         assertThat(testCatalogue.getPrice()).isEqualTo(DEFAULT_PRICE);
         assertThat(testCatalogue.getDuration()).isEqualTo(DEFAULT_DURATION);
         assertThat(testCatalogue.getSessionDt()).isEqualTo(DEFAULT_SESSION_DT);
+        assertThat(testCatalogue.getCategory()).isEqualTo(DEFAULT_CATEGORY);
 
         // Validate the Catalogue in Elasticsearch
         verify(mockCatalogueSearchRepository, times(1)).save(testCatalogue);
@@ -199,6 +206,26 @@ public class CatalogueResourceIT {
 
     @Test
     @Transactional
+    public void checkCategoryIsRequired() throws Exception {
+        int databaseSizeBeforeTest = catalogueRepository.findAll().size();
+        // set the field null
+        catalogue.setCategory(null);
+
+        // Create the Catalogue, which fails.
+        CatalogueDTO catalogueDTO = catalogueMapper.toDto(catalogue);
+
+
+        restCatalogueMockMvc.perform(post("/api/catalogues")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(catalogueDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Catalogue> catalogueList = catalogueRepository.findAll();
+        assertThat(catalogueList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllCatalogues() throws Exception {
         // Initialize the database
         catalogueRepository.saveAndFlush(catalogue);
@@ -212,7 +239,8 @@ public class CatalogueResourceIT {
             .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
-            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())));
+            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
     }
     
     @Test
@@ -230,7 +258,8 @@ public class CatalogueResourceIT {
             .andExpect(jsonPath("$.partnerId").value(DEFAULT_PARTNER_ID))
             .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.doubleValue()))
             .andExpect(jsonPath("$.duration").value(DEFAULT_DURATION))
-            .andExpect(jsonPath("$.sessionDt").value(DEFAULT_SESSION_DT.toString()));
+            .andExpect(jsonPath("$.sessionDt").value(DEFAULT_SESSION_DT.toString()))
+            .andExpect(jsonPath("$.category").value(DEFAULT_CATEGORY.toString()));
     }
 
 
@@ -697,6 +726,58 @@ public class CatalogueResourceIT {
         // Get all the catalogueList where sessionDt is null
         defaultCatalogueShouldNotBeFound("sessionDt.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByCategoryIsEqualToSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where category equals to DEFAULT_CATEGORY
+        defaultCatalogueShouldBeFound("category.equals=" + DEFAULT_CATEGORY);
+
+        // Get all the catalogueList where category equals to UPDATED_CATEGORY
+        defaultCatalogueShouldNotBeFound("category.equals=" + UPDATED_CATEGORY);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByCategoryIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where category not equals to DEFAULT_CATEGORY
+        defaultCatalogueShouldNotBeFound("category.notEquals=" + DEFAULT_CATEGORY);
+
+        // Get all the catalogueList where category not equals to UPDATED_CATEGORY
+        defaultCatalogueShouldBeFound("category.notEquals=" + UPDATED_CATEGORY);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByCategoryIsInShouldWork() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where category in DEFAULT_CATEGORY or UPDATED_CATEGORY
+        defaultCatalogueShouldBeFound("category.in=" + DEFAULT_CATEGORY + "," + UPDATED_CATEGORY);
+
+        // Get all the catalogueList where category equals to UPDATED_CATEGORY
+        defaultCatalogueShouldNotBeFound("category.in=" + UPDATED_CATEGORY);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByCategoryIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where category is not null
+        defaultCatalogueShouldBeFound("category.specified=true");
+
+        // Get all the catalogueList where category is null
+        defaultCatalogueShouldNotBeFound("category.specified=false");
+    }
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -709,7 +790,8 @@ public class CatalogueResourceIT {
             .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
-            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())));
+            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
 
         // Check, that the count call also returns 1
         restCatalogueMockMvc.perform(get("/api/catalogues/count?sort=id,desc&" + filter))
@@ -760,7 +842,8 @@ public class CatalogueResourceIT {
             .partnerId(UPDATED_PARTNER_ID)
             .price(UPDATED_PRICE)
             .duration(UPDATED_DURATION)
-            .sessionDt(UPDATED_SESSION_DT);
+            .sessionDt(UPDATED_SESSION_DT)
+            .category(UPDATED_CATEGORY);
         CatalogueDTO catalogueDTO = catalogueMapper.toDto(updatedCatalogue);
 
         restCatalogueMockMvc.perform(put("/api/catalogues")
@@ -777,6 +860,7 @@ public class CatalogueResourceIT {
         assertThat(testCatalogue.getPrice()).isEqualTo(UPDATED_PRICE);
         assertThat(testCatalogue.getDuration()).isEqualTo(UPDATED_DURATION);
         assertThat(testCatalogue.getSessionDt()).isEqualTo(UPDATED_SESSION_DT);
+        assertThat(testCatalogue.getCategory()).isEqualTo(UPDATED_CATEGORY);
 
         // Validate the Catalogue in Elasticsearch
         verify(mockCatalogueSearchRepository, times(1)).save(testCatalogue);
@@ -843,6 +927,7 @@ public class CatalogueResourceIT {
             .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
-            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())));
+            .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
     }
 }

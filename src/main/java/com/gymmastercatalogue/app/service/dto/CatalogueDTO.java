@@ -3,6 +3,7 @@ package com.gymmastercatalogue.app.service.dto;
 import java.time.Instant;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import com.gymmastercatalogue.app.domain.enumeration.categoryEnum;
 
 /**
  * A DTO for the {@link com.gymmastercatalogue.app.domain.Catalogue} entity.
@@ -23,6 +24,9 @@ public class CatalogueDTO implements Serializable {
     private Integer duration;
 
     private Instant sessionDt;
+
+    @NotNull
+    private categoryEnum category;
 
     
     public Long getId() {
@@ -73,6 +77,14 @@ public class CatalogueDTO implements Serializable {
         this.sessionDt = sessionDt;
     }
 
+    public categoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(categoryEnum category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -100,6 +112,7 @@ public class CatalogueDTO implements Serializable {
             ", price=" + getPrice() +
             ", duration=" + getDuration() +
             ", sessionDt='" + getSessionDt() + "'" +
+            ", category='" + getCategory() + "'" +
             "}";
     }
 }

@@ -27,6 +27,12 @@
     {
       "fieldName": "sessionDt",
       "fieldType": "Instant"
+    },
+    {
+      "fieldName": "category",
+      "fieldType": "categoryEnum",
+      "fieldValues": "HIIT,GYM,DANCE,SPIN,YOGA,PILATES,SWIMMING",
+      "fieldValidateRules": ["required"]
     }
   ],
   "changelogDate": "20210403115925",

@@ -8,6 +8,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.gymmastercatalogue.app.domain.enumeration.categoryEnum;
+
 /**
  * A Catalogue.
  */
@@ -40,6 +42,11 @@ public class Catalogue implements Serializable {
 
     @Column(name = "session_dt")
     private Instant sessionDt;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private categoryEnum category;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -114,6 +121,19 @@ public class Catalogue implements Serializable {
     public void setSessionDt(Instant sessionDt) {
         this.sessionDt = sessionDt;
     }
+
+    public categoryEnum getCategory() {
+        return category;
+    }
+
+    public Catalogue category(categoryEnum category) {
+        this.category = category;
+        return this;
+    }
+
+    public void setCategory(categoryEnum category) {
+        this.category = category;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -142,6 +162,7 @@ public class Catalogue implements Serializable {
             ", price=" + getPrice() +
             ", duration=" + getDuration() +
             ", sessionDt='" + getSessionDt() + "'" +
+            ", category='" + getCategory() + "'" +
             "}";
     }
 }

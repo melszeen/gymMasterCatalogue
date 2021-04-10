@@ -3,6 +3,7 @@ package com.gymmastercatalogue.app.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 import io.github.jhipster.service.Criteria;
+import com.gymmastercatalogue.app.domain.enumeration.categoryEnum;
 import io.github.jhipster.service.filter.BooleanFilter;
 import io.github.jhipster.service.filter.DoubleFilter;
 import io.github.jhipster.service.filter.Filter;
@@ -22,6 +23,24 @@ import io.github.jhipster.service.filter.InstantFilter;
  * fix type specific filters.
  */
 public class CatalogueCriteria implements Serializable, Criteria {
+    /**
+     * Class for filtering categoryEnum
+     */
+    public static class categoryEnumFilter extends Filter<categoryEnum> {
+
+        public categoryEnumFilter() {
+        }
+
+        public categoryEnumFilter(categoryEnumFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public categoryEnumFilter copy() {
+            return new categoryEnumFilter(this);
+        }
+
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -37,6 +56,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
 
     private InstantFilter sessionDt;
 
+    private categoryEnumFilter category;
+
     public CatalogueCriteria() {
     }
 
@@ -47,6 +68,7 @@ public class CatalogueCriteria implements Serializable, Criteria {
         this.price = other.price == null ? null : other.price.copy();
         this.duration = other.duration == null ? null : other.duration.copy();
         this.sessionDt = other.sessionDt == null ? null : other.sessionDt.copy();
+        this.category = other.category == null ? null : other.category.copy();
     }
 
     @Override
@@ -102,6 +124,14 @@ public class CatalogueCriteria implements Serializable, Criteria {
         this.sessionDt = sessionDt;
     }
 
+    public categoryEnumFilter getCategory() {
+        return category;
+    }
+
+    public void setCategory(categoryEnumFilter category) {
+        this.category = category;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -118,7 +148,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
             Objects.equals(partnerId, that.partnerId) &&
             Objects.equals(price, that.price) &&
             Objects.equals(duration, that.duration) &&
-            Objects.equals(sessionDt, that.sessionDt);
+            Objects.equals(sessionDt, that.sessionDt) &&
+            Objects.equals(category, that.category);
     }
 
     @Override
@@ -129,7 +160,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
         partnerId,
         price,
         duration,
-        sessionDt
+        sessionDt,
+        category
         );
     }
 
@@ -143,6 +175,7 @@ public class CatalogueCriteria implements Serializable, Criteria {
                 (price != null ? "price=" + price + ", " : "") +
                 (duration != null ? "duration=" + duration + ", " : "") +
                 (sessionDt != null ? "sessionDt=" + sessionDt + ", " : "") +
+                (category != null ? "category=" + category + ", " : "") +
             "}";
     }
 
