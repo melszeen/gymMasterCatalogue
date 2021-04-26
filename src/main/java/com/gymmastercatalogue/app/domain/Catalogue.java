@@ -28,10 +28,6 @@ public class Catalogue implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @NotNull
-    @Column(name = "partner_id", nullable = false)
-    private Integer partnerId;
-
     @DecimalMin(value = "0")
     @Column(name = "price")
     private Double price;
@@ -47,6 +43,10 @@ public class Catalogue implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private categoryEnum category;
+
+    @NotNull
+    @Column(name = "username", nullable = false)
+    private String username;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -68,19 +68,6 @@ public class Catalogue implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getPartnerId() {
-        return partnerId;
-    }
-
-    public Catalogue partnerId(Integer partnerId) {
-        this.partnerId = partnerId;
-        return this;
-    }
-
-    public void setPartnerId(Integer partnerId) {
-        this.partnerId = partnerId;
     }
 
     public Double getPrice() {
@@ -134,6 +121,19 @@ public class Catalogue implements Serializable {
     public void setCategory(categoryEnum category) {
         this.category = category;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Catalogue username(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -158,11 +158,11 @@ public class Catalogue implements Serializable {
         return "Catalogue{" +
             "id=" + getId() +
             ", description='" + getDescription() + "'" +
-            ", partnerId=" + getPartnerId() +
             ", price=" + getPrice() +
             ", duration=" + getDuration() +
             ", sessionDt='" + getSessionDt() + "'" +
             ", category='" + getCategory() + "'" +
+            ", username='" + getUsername() + "'" +
             "}";
     }
 }

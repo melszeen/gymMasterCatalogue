@@ -14,9 +14,6 @@ public class CatalogueDTO implements Serializable {
 
     private String description;
 
-    @NotNull
-    private Integer partnerId;
-
     @DecimalMin(value = "0")
     private Double price;
 
@@ -27,6 +24,9 @@ public class CatalogueDTO implements Serializable {
 
     @NotNull
     private categoryEnum category;
+
+    @NotNull
+    private String username;
 
     
     public Long getId() {
@@ -43,14 +43,6 @@ public class CatalogueDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getPartnerId() {
-        return partnerId;
-    }
-
-    public void setPartnerId(Integer partnerId) {
-        this.partnerId = partnerId;
     }
 
     public Double getPrice() {
@@ -85,6 +77,14 @@ public class CatalogueDTO implements Serializable {
         this.category = category;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -108,11 +108,11 @@ public class CatalogueDTO implements Serializable {
         return "CatalogueDTO{" +
             "id=" + getId() +
             ", description='" + getDescription() + "'" +
-            ", partnerId=" + getPartnerId() +
             ", price=" + getPrice() +
             ", duration=" + getDuration() +
             ", sessionDt='" + getSessionDt() + "'" +
             ", category='" + getCategory() + "'" +
+            ", username='" + getUsername() + "'" +
             "}";
     }
 }

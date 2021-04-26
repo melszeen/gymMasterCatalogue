@@ -98,9 +98,6 @@ public class CatalogueQueryService extends QueryService<Catalogue> {
             if (criteria.getDescription() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getDescription(), Catalogue_.description));
             }
-            if (criteria.getPartnerId() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getPartnerId(), Catalogue_.partnerId));
-            }
             if (criteria.getPrice() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getPrice(), Catalogue_.price));
             }
@@ -112,6 +109,9 @@ public class CatalogueQueryService extends QueryService<Catalogue> {
             }
             if (criteria.getCategory() != null) {
                 specification = specification.and(buildSpecification(criteria.getCategory(), Catalogue_.category));
+            }
+            if (criteria.getUsername() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getUsername(), Catalogue_.username));
             }
         }
         return specification;

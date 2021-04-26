@@ -50,10 +50,6 @@ public class CatalogueResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_PARTNER_ID = 1;
-    private static final Integer UPDATED_PARTNER_ID = 2;
-    private static final Integer SMALLER_PARTNER_ID = 1 - 1;
-
     private static final Double DEFAULT_PRICE = 0D;
     private static final Double UPDATED_PRICE = 1D;
     private static final Double SMALLER_PRICE = 0D - 1D;
@@ -67,6 +63,9 @@ public class CatalogueResourceIT {
 
     private static final categoryEnum DEFAULT_CATEGORY = categoryEnum.HIIT;
     private static final categoryEnum UPDATED_CATEGORY = categoryEnum.GYM;
+
+    private static final String DEFAULT_USERNAME = "AAAAAAAAAA";
+    private static final String UPDATED_USERNAME = "BBBBBBBBBB";
 
     @Autowired
     private CatalogueRepository catalogueRepository;
@@ -105,11 +104,11 @@ public class CatalogueResourceIT {
     public static Catalogue createEntity(EntityManager em) {
         Catalogue catalogue = new Catalogue()
             .description(DEFAULT_DESCRIPTION)
-            .partnerId(DEFAULT_PARTNER_ID)
             .price(DEFAULT_PRICE)
             .duration(DEFAULT_DURATION)
             .sessionDt(DEFAULT_SESSION_DT)
-            .category(DEFAULT_CATEGORY);
+            .category(DEFAULT_CATEGORY)
+            .username(DEFAULT_USERNAME);
         return catalogue;
     }
     /**
@@ -121,11 +120,11 @@ public class CatalogueResourceIT {
     public static Catalogue createUpdatedEntity(EntityManager em) {
         Catalogue catalogue = new Catalogue()
             .description(UPDATED_DESCRIPTION)
-            .partnerId(UPDATED_PARTNER_ID)
             .price(UPDATED_PRICE)
             .duration(UPDATED_DURATION)
             .sessionDt(UPDATED_SESSION_DT)
-            .category(UPDATED_CATEGORY);
+            .category(UPDATED_CATEGORY)
+            .username(UPDATED_USERNAME);
         return catalogue;
     }
 
@@ -150,11 +149,11 @@ public class CatalogueResourceIT {
         assertThat(catalogueList).hasSize(databaseSizeBeforeCreate + 1);
         Catalogue testCatalogue = catalogueList.get(catalogueList.size() - 1);
         assertThat(testCatalogue.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testCatalogue.getPartnerId()).isEqualTo(DEFAULT_PARTNER_ID);
         assertThat(testCatalogue.getPrice()).isEqualTo(DEFAULT_PRICE);
         assertThat(testCatalogue.getDuration()).isEqualTo(DEFAULT_DURATION);
         assertThat(testCatalogue.getSessionDt()).isEqualTo(DEFAULT_SESSION_DT);
         assertThat(testCatalogue.getCategory()).isEqualTo(DEFAULT_CATEGORY);
+        assertThat(testCatalogue.getUsername()).isEqualTo(DEFAULT_USERNAME);
 
         // Validate the Catalogue in Elasticsearch
         verify(mockCatalogueSearchRepository, times(1)).save(testCatalogue);
@@ -186,10 +185,10 @@ public class CatalogueResourceIT {
 
     @Test
     @Transactional
-    public void checkPartnerIdIsRequired() throws Exception {
+    public void checkCategoryIsRequired() throws Exception {
         int databaseSizeBeforeTest = catalogueRepository.findAll().size();
         // set the field null
-        catalogue.setPartnerId(null);
+        catalogue.setCategory(null);
 
         // Create the Catalogue, which fails.
         CatalogueDTO catalogueDTO = catalogueMapper.toDto(catalogue);
@@ -206,10 +205,10 @@ public class CatalogueResourceIT {
 
     @Test
     @Transactional
-    public void checkCategoryIsRequired() throws Exception {
+    public void checkUsernameIsRequired() throws Exception {
         int databaseSizeBeforeTest = catalogueRepository.findAll().size();
         // set the field null
-        catalogue.setCategory(null);
+        catalogue.setUsername(null);
 
         // Create the Catalogue, which fails.
         CatalogueDTO catalogueDTO = catalogueMapper.toDto(catalogue);
@@ -236,11 +235,11 @@ public class CatalogueResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(catalogue.getId().intValue())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
             .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
-            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())))
+            .andExpect(jsonPath("$.[*].username").value(hasItem(DEFAULT_USERNAME)));
     }
     
     @Test
@@ -255,11 +254,11 @@ public class CatalogueResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(catalogue.getId().intValue()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
-            .andExpect(jsonPath("$.partnerId").value(DEFAULT_PARTNER_ID))
             .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.doubleValue()))
             .andExpect(jsonPath("$.duration").value(DEFAULT_DURATION))
             .andExpect(jsonPath("$.sessionDt").value(DEFAULT_SESSION_DT.toString()))
-            .andExpect(jsonPath("$.category").value(DEFAULT_CATEGORY.toString()));
+            .andExpect(jsonPath("$.category").value(DEFAULT_CATEGORY.toString()))
+            .andExpect(jsonPath("$.username").value(DEFAULT_USERNAME));
     }
 
 
@@ -357,111 +356,6 @@ public class CatalogueResourceIT {
 
         // Get all the catalogueList where description does not contain UPDATED_DESCRIPTION
         defaultCatalogueShouldBeFound("description.doesNotContain=" + UPDATED_DESCRIPTION);
-    }
-
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsEqualToSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId equals to DEFAULT_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.equals=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId equals to UPDATED_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.equals=" + UPDATED_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId not equals to DEFAULT_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.notEquals=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId not equals to UPDATED_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.notEquals=" + UPDATED_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsInShouldWork() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId in DEFAULT_PARTNER_ID or UPDATED_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.in=" + DEFAULT_PARTNER_ID + "," + UPDATED_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId equals to UPDATED_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.in=" + UPDATED_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId is not null
-        defaultCatalogueShouldBeFound("partnerId.specified=true");
-
-        // Get all the catalogueList where partnerId is null
-        defaultCatalogueShouldNotBeFound("partnerId.specified=false");
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId is greater than or equal to DEFAULT_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.greaterThanOrEqual=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId is greater than or equal to UPDATED_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.greaterThanOrEqual=" + UPDATED_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId is less than or equal to DEFAULT_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.lessThanOrEqual=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId is less than or equal to SMALLER_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.lessThanOrEqual=" + SMALLER_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsLessThanSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId is less than DEFAULT_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.lessThan=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId is less than UPDATED_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.lessThan=" + UPDATED_PARTNER_ID);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCataloguesByPartnerIdIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        catalogueRepository.saveAndFlush(catalogue);
-
-        // Get all the catalogueList where partnerId is greater than DEFAULT_PARTNER_ID
-        defaultCatalogueShouldNotBeFound("partnerId.greaterThan=" + DEFAULT_PARTNER_ID);
-
-        // Get all the catalogueList where partnerId is greater than SMALLER_PARTNER_ID
-        defaultCatalogueShouldBeFound("partnerId.greaterThan=" + SMALLER_PARTNER_ID);
     }
 
 
@@ -778,6 +672,84 @@ public class CatalogueResourceIT {
         // Get all the catalogueList where category is null
         defaultCatalogueShouldNotBeFound("category.specified=false");
     }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByUsernameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username equals to DEFAULT_USERNAME
+        defaultCatalogueShouldBeFound("username.equals=" + DEFAULT_USERNAME);
+
+        // Get all the catalogueList where username equals to UPDATED_USERNAME
+        defaultCatalogueShouldNotBeFound("username.equals=" + UPDATED_USERNAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByUsernameIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username not equals to DEFAULT_USERNAME
+        defaultCatalogueShouldNotBeFound("username.notEquals=" + DEFAULT_USERNAME);
+
+        // Get all the catalogueList where username not equals to UPDATED_USERNAME
+        defaultCatalogueShouldBeFound("username.notEquals=" + UPDATED_USERNAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByUsernameIsInShouldWork() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username in DEFAULT_USERNAME or UPDATED_USERNAME
+        defaultCatalogueShouldBeFound("username.in=" + DEFAULT_USERNAME + "," + UPDATED_USERNAME);
+
+        // Get all the catalogueList where username equals to UPDATED_USERNAME
+        defaultCatalogueShouldNotBeFound("username.in=" + UPDATED_USERNAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByUsernameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username is not null
+        defaultCatalogueShouldBeFound("username.specified=true");
+
+        // Get all the catalogueList where username is null
+        defaultCatalogueShouldNotBeFound("username.specified=false");
+    }
+                @Test
+    @Transactional
+    public void getAllCataloguesByUsernameContainsSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username contains DEFAULT_USERNAME
+        defaultCatalogueShouldBeFound("username.contains=" + DEFAULT_USERNAME);
+
+        // Get all the catalogueList where username contains UPDATED_USERNAME
+        defaultCatalogueShouldNotBeFound("username.contains=" + UPDATED_USERNAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCataloguesByUsernameNotContainsSomething() throws Exception {
+        // Initialize the database
+        catalogueRepository.saveAndFlush(catalogue);
+
+        // Get all the catalogueList where username does not contain DEFAULT_USERNAME
+        defaultCatalogueShouldNotBeFound("username.doesNotContain=" + DEFAULT_USERNAME);
+
+        // Get all the catalogueList where username does not contain UPDATED_USERNAME
+        defaultCatalogueShouldBeFound("username.doesNotContain=" + UPDATED_USERNAME);
+    }
+
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -787,11 +759,11 @@ public class CatalogueResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(catalogue.getId().intValue())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
             .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
-            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())))
+            .andExpect(jsonPath("$.[*].username").value(hasItem(DEFAULT_USERNAME)));
 
         // Check, that the count call also returns 1
         restCatalogueMockMvc.perform(get("/api/catalogues/count?sort=id,desc&" + filter))
@@ -839,11 +811,11 @@ public class CatalogueResourceIT {
         em.detach(updatedCatalogue);
         updatedCatalogue
             .description(UPDATED_DESCRIPTION)
-            .partnerId(UPDATED_PARTNER_ID)
             .price(UPDATED_PRICE)
             .duration(UPDATED_DURATION)
             .sessionDt(UPDATED_SESSION_DT)
-            .category(UPDATED_CATEGORY);
+            .category(UPDATED_CATEGORY)
+            .username(UPDATED_USERNAME);
         CatalogueDTO catalogueDTO = catalogueMapper.toDto(updatedCatalogue);
 
         restCatalogueMockMvc.perform(put("/api/catalogues")
@@ -856,11 +828,11 @@ public class CatalogueResourceIT {
         assertThat(catalogueList).hasSize(databaseSizeBeforeUpdate);
         Catalogue testCatalogue = catalogueList.get(catalogueList.size() - 1);
         assertThat(testCatalogue.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testCatalogue.getPartnerId()).isEqualTo(UPDATED_PARTNER_ID);
         assertThat(testCatalogue.getPrice()).isEqualTo(UPDATED_PRICE);
         assertThat(testCatalogue.getDuration()).isEqualTo(UPDATED_DURATION);
         assertThat(testCatalogue.getSessionDt()).isEqualTo(UPDATED_SESSION_DT);
         assertThat(testCatalogue.getCategory()).isEqualTo(UPDATED_CATEGORY);
+        assertThat(testCatalogue.getUsername()).isEqualTo(UPDATED_USERNAME);
 
         // Validate the Catalogue in Elasticsearch
         verify(mockCatalogueSearchRepository, times(1)).save(testCatalogue);
@@ -924,10 +896,10 @@ public class CatalogueResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(catalogue.getId().intValue())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].partnerId").value(hasItem(DEFAULT_PARTNER_ID)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)))
             .andExpect(jsonPath("$.[*].sessionDt").value(hasItem(DEFAULT_SESSION_DT.toString())))
-            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())));
+            .andExpect(jsonPath("$.[*].category").value(hasItem(DEFAULT_CATEGORY.toString())))
+            .andExpect(jsonPath("$.[*].username").value(hasItem(DEFAULT_USERNAME)));
     }
 }

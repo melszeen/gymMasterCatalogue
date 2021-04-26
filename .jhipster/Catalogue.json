@@ -8,11 +8,6 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "partnerId",
-      "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "price",
       "fieldType": "Double",
       "fieldValidateRules": ["min"],
@@ -32,6 +27,11 @@
       "fieldName": "category",
       "fieldType": "categoryEnum",
       "fieldValues": "HIIT,GYM,DANCE,SPIN,YOGA,PILATES,SWIMMING",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "username",
+      "fieldType": "String",
       "fieldValidateRules": ["required"]
     }
   ],

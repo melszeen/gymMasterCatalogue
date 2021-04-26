@@ -48,8 +48,6 @@ public class CatalogueCriteria implements Serializable, Criteria {
 
     private StringFilter description;
 
-    private IntegerFilter partnerId;
-
     private DoubleFilter price;
 
     private IntegerFilter duration;
@@ -58,17 +56,19 @@ public class CatalogueCriteria implements Serializable, Criteria {
 
     private categoryEnumFilter category;
 
+    private StringFilter username;
+
     public CatalogueCriteria() {
     }
 
     public CatalogueCriteria(CatalogueCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.description = other.description == null ? null : other.description.copy();
-        this.partnerId = other.partnerId == null ? null : other.partnerId.copy();
         this.price = other.price == null ? null : other.price.copy();
         this.duration = other.duration == null ? null : other.duration.copy();
         this.sessionDt = other.sessionDt == null ? null : other.sessionDt.copy();
         this.category = other.category == null ? null : other.category.copy();
+        this.username = other.username == null ? null : other.username.copy();
     }
 
     @Override
@@ -90,14 +90,6 @@ public class CatalogueCriteria implements Serializable, Criteria {
 
     public void setDescription(StringFilter description) {
         this.description = description;
-    }
-
-    public IntegerFilter getPartnerId() {
-        return partnerId;
-    }
-
-    public void setPartnerId(IntegerFilter partnerId) {
-        this.partnerId = partnerId;
     }
 
     public DoubleFilter getPrice() {
@@ -132,6 +124,14 @@ public class CatalogueCriteria implements Serializable, Criteria {
         this.category = category;
     }
 
+    public StringFilter getUsername() {
+        return username;
+    }
+
+    public void setUsername(StringFilter username) {
+        this.username = username;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -145,11 +145,11 @@ public class CatalogueCriteria implements Serializable, Criteria {
         return
             Objects.equals(id, that.id) &&
             Objects.equals(description, that.description) &&
-            Objects.equals(partnerId, that.partnerId) &&
             Objects.equals(price, that.price) &&
             Objects.equals(duration, that.duration) &&
             Objects.equals(sessionDt, that.sessionDt) &&
-            Objects.equals(category, that.category);
+            Objects.equals(category, that.category) &&
+            Objects.equals(username, that.username);
     }
 
     @Override
@@ -157,11 +157,11 @@ public class CatalogueCriteria implements Serializable, Criteria {
         return Objects.hash(
         id,
         description,
-        partnerId,
         price,
         duration,
         sessionDt,
-        category
+        category,
+        username
         );
     }
 
@@ -171,11 +171,11 @@ public class CatalogueCriteria implements Serializable, Criteria {
         return "CatalogueCriteria{" +
                 (id != null ? "id=" + id + ", " : "") +
                 (description != null ? "description=" + description + ", " : "") +
-                (partnerId != null ? "partnerId=" + partnerId + ", " : "") +
                 (price != null ? "price=" + price + ", " : "") +
                 (duration != null ? "duration=" + duration + ", " : "") +
                 (sessionDt != null ? "sessionDt=" + sessionDt + ", " : "") +
                 (category != null ? "category=" + category + ", " : "") +
+                (username != null ? "username=" + username + ", " : "") +
             "}";
     }
 
