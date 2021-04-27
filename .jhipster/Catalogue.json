@@ -33,6 +33,11 @@
       "fieldName": "username",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "partnerId",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
     }
   ],
   "changelogDate": "20210403115925",

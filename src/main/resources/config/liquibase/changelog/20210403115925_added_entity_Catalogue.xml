@@ -33,6 +33,9 @@
             <column name="username" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="partner_id" type="integer">
+                <constraints nullable="false" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
         <dropDefaultValue tableName="catalogue" columnName="session_dt" columnDataType="datetime"/>
@@ -63,6 +66,7 @@
             <column name="session_dt" type="datetime"/>
             <column name="category" type="string"/>
             <column name="username" type="string"/>
+            <column name="partner_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

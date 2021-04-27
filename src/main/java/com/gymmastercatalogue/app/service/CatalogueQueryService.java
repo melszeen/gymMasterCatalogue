@@ -113,6 +113,9 @@ public class CatalogueQueryService extends QueryService<Catalogue> {
             if (criteria.getUsername() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getUsername(), Catalogue_.username));
             }
+            if (criteria.getPartnerId() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getPartnerId(), Catalogue_.partnerId));
+            }
         }
         return specification;
     }

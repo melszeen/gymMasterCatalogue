@@ -48,6 +48,10 @@ public class Catalogue implements Serializable {
     @Column(name = "username", nullable = false)
     private String username;
 
+    @NotNull
+    @Column(name = "partner_id", nullable = false)
+    private Integer partnerId;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -134,6 +138,19 @@ public class Catalogue implements Serializable {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public Integer getPartnerId() {
+        return partnerId;
+    }
+
+    public Catalogue partnerId(Integer partnerId) {
+        this.partnerId = partnerId;
+        return this;
+    }
+
+    public void setPartnerId(Integer partnerId) {
+        this.partnerId = partnerId;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -163,6 +180,7 @@ public class Catalogue implements Serializable {
             ", sessionDt='" + getSessionDt() + "'" +
             ", category='" + getCategory() + "'" +
             ", username='" + getUsername() + "'" +
+            ", partnerId=" + getPartnerId() +
             "}";
     }
 }

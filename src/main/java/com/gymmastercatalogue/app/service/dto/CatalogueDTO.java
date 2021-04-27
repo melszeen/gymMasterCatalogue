@@ -28,6 +28,9 @@ public class CatalogueDTO implements Serializable {
     @NotNull
     private String username;
 
+    @NotNull
+    private Integer partnerId;
+
     
     public Long getId() {
         return id;
@@ -85,6 +88,14 @@ public class CatalogueDTO implements Serializable {
         this.username = username;
     }
 
+    public Integer getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(Integer partnerId) {
+        this.partnerId = partnerId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -113,6 +124,7 @@ public class CatalogueDTO implements Serializable {
             ", sessionDt='" + getSessionDt() + "'" +
             ", category='" + getCategory() + "'" +
             ", username='" + getUsername() + "'" +
+            ", partnerId=" + getPartnerId() +
             "}";
     }
 }

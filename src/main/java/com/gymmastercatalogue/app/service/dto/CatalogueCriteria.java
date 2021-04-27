@@ -58,6 +58,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
 
     private StringFilter username;
 
+    private IntegerFilter partnerId;
+
     public CatalogueCriteria() {
     }
 
@@ -69,6 +71,7 @@ public class CatalogueCriteria implements Serializable, Criteria {
         this.sessionDt = other.sessionDt == null ? null : other.sessionDt.copy();
         this.category = other.category == null ? null : other.category.copy();
         this.username = other.username == null ? null : other.username.copy();
+        this.partnerId = other.partnerId == null ? null : other.partnerId.copy();
     }
 
     @Override
@@ -132,6 +135,14 @@ public class CatalogueCriteria implements Serializable, Criteria {
         this.username = username;
     }
 
+    public IntegerFilter getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(IntegerFilter partnerId) {
+        this.partnerId = partnerId;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -149,7 +160,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
             Objects.equals(duration, that.duration) &&
             Objects.equals(sessionDt, that.sessionDt) &&
             Objects.equals(category, that.category) &&
-            Objects.equals(username, that.username);
+            Objects.equals(username, that.username) &&
+            Objects.equals(partnerId, that.partnerId);
     }
 
     @Override
@@ -161,7 +173,8 @@ public class CatalogueCriteria implements Serializable, Criteria {
         duration,
         sessionDt,
         category,
-        username
+        username,
+        partnerId
         );
     }
 
@@ -176,6 +189,7 @@ public class CatalogueCriteria implements Serializable, Criteria {
                 (sessionDt != null ? "sessionDt=" + sessionDt + ", " : "") +
                 (category != null ? "category=" + category + ", " : "") +
                 (username != null ? "username=" + username + ", " : "") +
+                (partnerId != null ? "partnerId=" + partnerId + ", " : "") +
             "}";
     }
 
